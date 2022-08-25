@@ -37,7 +37,8 @@ FROM EMP;
 -- 직속상관 앞 두자리 78 = 8888
 -- 그 외는 그대로 출력
 
-SELECT 
+SELECT EMPNO, ENAME, MGR, 
+    AS CHG_MGR
 
     
     
