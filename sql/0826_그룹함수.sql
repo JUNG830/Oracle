@@ -432,6 +432,28 @@ FROM
         ON (E.MGR = E2.ENAME)
 ORDER BY D.DEPTNO;
 
+SELECT D.DEPTNO 부서번호, 
+              D.DNAME 부서이름, 
+              E.EMPNO 사원번호,
+              E.ENAME 사원이름,
+              E.MGR 직속상관, 
+              E.SAL 급여,
+              E.DEPTNO 부서번호2, 
+              S.LOSAL,
+              S.HISAL, 
+              S.GRADE 등급,
+              E2.EMPNO 상관번호,
+              E2.ENAME 상관이름
+FROM 
+    EMP E, DEPT D, SALGRADE S, EMP E2
+WHERE 
+    E.DEPTNO(+) = D.DEPTNO
+    AND E.SAL BETWEEN S.LOSAL AND S.GRADE(+)
+    AND E.MGR = E2.ENAME(+)
+ORDER BY D.DEPTNO;
+
+
+
 SELECT * 
 FROM SALGRADE;
 
