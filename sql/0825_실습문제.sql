@@ -38,7 +38,15 @@ FROM EMP;
 -- 그 외는 그대로 출력
 
 SELECT EMPNO, ENAME, MGR, 
-    AS CHG_MGR
+    CASE
+        WHEN MGR IS  NULL THEN '0000'
+        WHEN SUBSTR(MGR, 1, 2)  = 75 THEN '5555'
+        WHEN SUBSTR(MGR, 1, 2)  = 76 THEN '6666'
+        WHEN SUBSTR(MGR, 1, 2)  = 77 THEN '7777'
+        WHEN SUBSTR(MGR, 1, 2)  = 78 THEN '8888'
+    ELSE TO_CHAR(MGR)
+    END AS CHG_MGR 
+FROM EMP;
 
     
     
