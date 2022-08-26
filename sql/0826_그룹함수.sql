@@ -230,15 +230,210 @@ SELECT EMPNO, ENAME, SAL, DEPTNO
 FROM EMP
 WHERE SAL > 2000;
 
+----------------------------------------------------------------------------------------------------------------------
+/* 조인 */
+-- SELECT 
+-- FROM 테이블1, 테이블2, ........테이블 N
+-- 조인은 한개 이상의 테이블과 테이블을 서로 연결하여 사용하는 기법
+-- 일반적으로 테이블의 식별 값인 Primary Key와 테이블 간 공통 값인 Foreign Key 값을 사용하여 조인 
+SELECT *
+FROM EMP, DEPT
+WHERE EMP.DEPTNO = DEPT.DEPTNO
+ORDER BY EMPNO;
+----------------------------------------------------------------------------------------------------------------------
+/* 등가조인(EQUI JOIN) : 1:1 맞교환 */
+-- 테이블을 연결한 후에 출력 행을 각 테이블의 특정 열에 " 일치한 데이터 "를 기준으로 선정하는 방식
+-- 내부 조인 또는 단순 조인이라도 부름.
+-- 일반적으로 가장 많이 사용되는 조인 방식.
 
+SELECT E.EMPNO 사원번호, E.ENAME 사원이름, D.DEPTNO 부서번호, D.DNAME 부서이름, D.LOC 부서위치
+FROM EMP E, DEPT D    -- EMP 를 E로 별칭 DEPT를 D로 별칭
+WHERE E.DEPTNO = D.DEPTNO  -- 이 조건이 JOIN 임.
+ORDER BY D.DEPTNO, E.EMPNO;
+----------------------------------------------------------------------------------------------------------------------
+/* ANSI 방식 : 미국 규격  */
+SELECT E.EMPNO, E.ENAME, D.DNAME, D.LOC
+FROM EMP E JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO
+ORDER BY D.DEPTNO, E.DEPTNO;
+----------------------------------------------------------------------------------------------------------------------
+/* WHERE 절에 조건식을 추가하여 출력 범위 설정  */
+SELECT E.EMPNO, E.ENAME, E.SAL, D.DEPTNO, D.DNAME, D.LOC
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO AND SAL >= 3000;
+-- ANSI 방식
+SELECT E.EMPNO, E.ENAME, E.SAL, D.DEPTNO, D.DNAME, D.LOC
+FROM EMP E JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO AND SAL >= 3000;
+----------------------------------------------------------------------------------------------------------------------
+/* 연습문제 */
+-- EMP테이블의 별칭을 E로 하고, DEPT의 별칭을 D로 하여 다음과 같이 등가조인을 했을 때 
+-- 급여가 2500이하이고, 사원번호가 9999이하인 사원의 정보를 출력
+SELECT E.EMPNO 사원번호, E.ENAME 사원이름, E.SAL 급여, D.DEPTNO 부서번호, D.DNAME 부서이름
+FROM EMP E JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO
+E.SAL <= 2500 AND E.EMPNO <= 9999
+ORDER BY 사원번호;
 
+SELECT E.EMPNO 사원번호, E.ENAME 사원이름, E.SAL 급여, D.DEPTNO 부서번호, D.DNAME 부서이름
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO
+        AND E.SAL <= 2500 
+        AND E.EMPNO <= 9999
+ORDER BY 사원번호;
+----------------------------------------------------------------------------------------------------------------------
+/* 비등가 조인 : 동일 컬럼이 없이 다른 조건을 사용하여 조인 할 때 사용 */
+-- 자주 사용되는 방식은 아님. 
+SELECT E.ENAME, E.SAL, S.GRADE, S.LOSAL, S.HISAL
+FROM EMP E JOIN SALGRADE S  -- 두개의 테이블을 조인 함. 
+ON E.SAL BETWEEN S.LOSAL AND S.HISAL; -- EMP 테이블을 기준으로 S.LOSAL 과 S.HISAL 의 사이 값을 가지고 옴. 
 
+SELECT E.ENAME, E.SAL, S.GRADE, S.LOSAL, S.HISAL
+FROM EMP E, SALGRADE S
+WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL;
 
+----------------------------------------------------------------------------------------------------------------------
+/* 자체 조인 : 자기 자신과 자신이 조인을 하는 것 */
+-- EX) 사원 정보과 해당 사원의 직속 상관의 정보를 나란히 출력하고자 할 때 사용.
+SELECT E1.EMPNO 사원번호, 
+        E1.ENAME 사원이름, 
+        E1.MGR , 
+        E2.EMPNO 상관의상관번호, 
+        E2.ENAME 상관이름
+FROM EMP E1, EMP E2
+WHERE E1.MGR = E2.EMPNO;
+/* ANSI */
+SELECT E1.EMPNO 사원번호, 
+        E1.ENAME 사원이름, 
+        E1.MGR , 
+        E2.EMPNO 상관의상관번호, 
+        E2.ENAME 상관이름
+FROM EMP E1 JOIN EMP E2
+ON E1.MGR = E2.EMPNO;
+----------------------------------------------------------------------------------------------------------------------
+/* 외부조인 */
+-- 동등 조인(INNER JOIN)의 경우 한쪽 컬럼에 대한 값이 없다면 해당 행이 조회되지 않음. 
+-- 외부 조인(OUTER JOIN)은 내부 조인과 다르게 공통되지 않은 ROW도 유지
+-- 외부 조인을 사용하는 이유는 기준 테이블의 데이터가 모두 조회되고(누락없이), 
+--      대상 테이블에 데이터가 있을 경우 해당 컬럼의 값을 가져오기 위해서 사용.
+--      (+) 기호를 사용, 데이터값이 부족한 테이블의 열 이름 뒤에 기술
 
+SELECT E1.EMPNO 사원번호, E1.ENAME 사원이름, E1.MGR,
+              E2.EMPNO 상사번호, E2.ENAME 상사이름
+FROM EMP E1, EMP E2
+WHERE E1.MGR = E2.EMPNO(+)  -- (+) MGR 의 NULL 값도 다 나옴. (모든 자료가 다 나옴) / 왼쪽을 기준으로 조인. / 왼쪽 데이터가 더 많은 경우 사용.
+ORDER BY E1.EMPNO;
+/* (ANSI) LEFT OUTER JOIN : 합치기에 사용한 두 테이블 중 " 왼쪽 " 에 기술된 테이블의 컬럼 수를 기준으로 JOIN */
+SELECT E1.EMPNO 사원번호, E1.ENAME 사원이름, E1.MGR,
+              E2.EMPNO 상사번호, E2.ENAME 상사이름
+FROM EMP E1 LEFT OUTER JOIN EMP E2
+ON E1.MGR = E2.EMPNO
+ORDER BY E1.EMPNO;
+/* RIGHT OUTER JOIN : 합치기에 사용한 두 테이블 중 " 오른쪽 " 에 기술된 테이블의 컬럼 수를 기준으로 JOIN */
+SELECT E.ENAME, E.DEPTNO, D.DNAME
+FROM EMP E, DEPT D
+WHERE E.DEPTNO(+) = D.DEPTNO  -- E.DEPTNO 의 빈 값까지도 모두 출력. / 오른쪽을 기준으로 조인 / 오른쪽 데이터가 더 많은 경우 사용
+ORDER BY E.EMPNO;
+/* (ANSI) */
+SELECT E.ENAME, E.DEPTNO, D.DNAME
+FROM EMP E RIGHT OUTER JOIN DEPT D
+ON E.DEPTNO(+) = D.DEPTNO  -- E.DEPTNO 의 빈 값까지도 모두 출력. / 오른쪽을 기준으로 조인 / 오른쪽 데이터가 더 많은 경우 사용
+ORDER BY E.EMPNO;
 
+----------------------------------------------------------------------------------------------------------------------
+/* NATURAL JOIN : 두 테이블의 동일한 이름(컬럼명)을 갖는 컬럼은 모두 조인 */
+-- 동등조인과 비슷하지만 WHERE 조건절이 없이 조인, 자주 사용 안됨.
+-- 내부적으로 DEPTNO 열을 기준으로 등가 조인 됨.
+SELECT EMPNO, ENAME, DNAME
+FROM EMP NATURAL JOIN DEPT;
 
+SELECT E.EMPNO, E.ENAME, E.JOB, E. HIREDATE, E.SAL, E.COMM, D.DNAME, D.LOC
+            /* E.DEPTNOF 를 넣을 경우 동등조인의 기본 조건인 같은 이름을 기준으로 조인하기 때문에 오류/ 그냥 DEPTNO 는 가능 */
+FROM EMP E NATURAL JOIN DEPT D
+ORDER BY DEPTNO, E.EMPNO;
 
+----------------------------------------------------------------------------------------------------------------------
+/* ANSI / JOIN ~ USING */
+-- 동등조인(INNER JOIN)과 유사하며, 동등조인을 대신하여 사용 가능.
+-- NATURAL JOIN 이 자동으로 조인의 기준 열을 지정하는 것과 달리 USING 키워드에 조인 기준으로 사용할 열을 명시해줘야 함.
+-- FROM 테이블1 JOIN 테이블2 USING ( 조인에 사용할 기준열 )
+SELECT E.EMPNO, E.ENAME, E.JOB, E.MGR, E.HIREDATE, E.SAL, E.COMM, DEPTNO, 
+             D.DNAME, D.DNAME, D.LOC
+FROM EMP E JOIN DEPT D USING (DEPTNO)
+WHERE SAL >= 3000
+ORDER BY DEPTNO, E.EMPNO;
+----------------------------------------------------------------------------------------------------------------------
+/* FULL OUTER JOIN : 양쪽 테이블 모두 OUTER JOIN 대상에 포함 */
+-- 어느쪽이든  NULL 을 포함하더라도 모두 출력. (LEFT + RIGHT 라고 보면 됨.)
+SELECT E.ENAME, E.DEPTNO, D.DEPTNO, D.DNAME
+FROM EMP E FULL OUTER JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO
+ORDER BY E.DEPTNO;
 
+----------------------------------------------------------------------------------------------------------------------
+/* 연습문제 */
+-- 1. 급여가 2000 초과인 사원들의 부서 정보, 사원정보를 출력.
+-- 오라클 문법과 ANSI 문법
+SELECT D.DEPTNO, D.DNAME, E.EMPNO, E.ENAME, E.SAL
+FROM EMP E JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO AND E.SAL > 2000
+ORDER BY E.DEPTNO;
+
+SELECT D.DEPTNO, D.DNAME, E.EMPNO, E.ENAME, E.SAL
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO AND E.SAL > 2000
+ORDER BY E.DEPTNO;
+
+SELECT DEPTNO, D.DNAME, E.EMPNO, E.ENAME, E.SAL
+FROM EMP E NATURAL JOIN DEPT D
+WHERE  E.SAL > 2000
+ORDER BY DEPTNO;
+
+-- 2. 각 부서별 평균 급여, 최대 급여, 최소 급여, 사원수 출력
+-- 오라클 문법과 ANSI 문법
+SELECT E.DEPTNO, D.DNAME, ROUND(AVG(E.SAL)), MAX(E.SAL), MIN(E.SAL), COUNT(*)
+FROM DEPT D JOIN EMP E
+ON E.DEPTNO = D.DEPTNO
+GROUP BY E.DEPTNO, D.DNAME
+ORDER BY DEPTNO;
+
+SELECT E.DEPTNO, D.DNAME, ROUND(AVG(E.SAL)), MAX(E.SAL), MIN(E.SAL), COUNT(*)
+FROM DEPT D, EMP E
+WHERE E.DEPTNO = D.DEPTNO
+GROUP BY E.DEPTNO, D.DNAME
+ORDER BY DEPTNO;
+
+-- 3. 모든 부서정보와 사원정보를 부서번호, 사원이름 순으로 정렬하여 출력
+SELECT E.DEPTNO, D.DNAME, E.EMPNO, E.ENAME, E.JOB, E.SAL
+FROM EMP E RIGHT OUTER JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO
+ORDER BY E.DEPTNO, E.ENAME;
+
+-- 4. 모든 부서번호, 부서 이름, 사원번호,  사원 이름, 사원급여, 직속상관의사원번호 출력
+-- 3개의 테이블 (EMP, DEPT, SALGRADE)
+SELECT D.DEPTNO 부서번호, 
+              D.DNAME 부서이름, 
+              E.EMPNO 사원번호,
+              E.ENAME 사원이름,
+              E.MGR 직속상관, 
+              E.SAL 급여,
+              E.DEPTNO 부서번호2, 
+              S.LOSAL,
+              S.HISAL, 
+              S.GRADE 등급,
+              E2.EMPNO 상관번호,
+              E2.ENAME 상관이름
+FROM 
+    EMP E RIGHT OUTER JOIN DEPT D
+        ON (E.DEPTNO = D.DEPTNO)
+     LEFT OUTER JOIN SALGRADE S 
+        ON (E.SAL BETWEEN S.LOSAL AND S.HISAL)
+     LEFT OUTER JOIN EMP E2
+        ON (E.MGR = E2.ENAME)
+ORDER BY D.DEPTNO;
+
+SELECT * 
+FROM SALGRADE;
 
 
 
