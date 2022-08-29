@@ -63,13 +63,51 @@ SELECT TO_CHAR(TO_DATE('22/08/29'),  'YYYY-MM-DD')  -- 주어진 날짜를 변환
 
 12. SET OPERATOR : UNION(합집합, 중복제거), UNION ALL(합집합, NOT 중복제거), MINUS(차집합, 앞에서 뒤를 뺌), INTERSECT(교집합)
 
-13. 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+13. 문자열 데이터 '190505' -> '2019년 05월 05일' 로 변환
+SELECT TO_CHAR(TO_DATE('190505', 'YYMMDD'), 'YYYY"년" MM"월" DD"일"') 년월일
+     FROM DUAL;
+     
+14. INITCAP 함수 : 첫자를 대문자로 변경해주는 함수.
+
+15. TRIM 함수 : 조회한 컬럼의 좌우의 띄어쓰기, 빈간 등의 공백을 제거함. 
+
+16. SET OPERATOR : INTERSET(교집합) : SELECT 문의 수행 결과에서 둘 다 포함되어 있는 부분만 추출하여 출력. 
+
+17. UNION과 UNION ALL 차이 : 중복 포함 여부에 따라 구분
+
+18. DECODE 문에 대해서 서술 : 주어진 데이터 값이 조건 값과 일치하면 값을 출력하고, 일치하는 값이 없으면 기본 값 출력.
+SELECT EMPNO, ENAME, JOB, SAL,
+        DECODE (JOB, 
+                'MANAGER', SAL * 100,
+                'SALESMAN', SAL * 200,
+                SAL) AS "성과급"
+        FROM EMP;            
+
+19. 문자열을 이어붙이는 방법 
+-  || -> CONCAT : 중첩해서 사용 가능. 
+SELECT CONCAT(EMPNO, ENAME), CONCAT(EMPNO, CONCAT(' : ', ENAME))
+        FROM EMP
+        WHERE ENAME = 'JAMES';
+
+20 . CONCAT : 중첩해서 사용 가능. 
+SELECT CONCAT(EMPNO, CONCAT(' : ', CONCAT(ENAME, CONCAT(', ', DEPTNO)))) AS "CONCAT"
+        FROM EMP
+        WHERE ENAME = 'JAMES';
+
+20. RANK() OVER 함수 : 순위 부여시 중복값이 발생하면 중복 값의 갯수만큼 건너뛰고 다음 순위 부여 EX) 2등이 2명이면 3등은 빼고 4등부터 순위 부여.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
