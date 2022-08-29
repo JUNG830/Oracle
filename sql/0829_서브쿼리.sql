@@ -305,7 +305,7 @@ SELECT EMPNO, ENAME, SAL,
                                        WHERE JOB = 'SALESMAN')
     ORDER BY EMPNO;
 
-SELECT DISTINCT SAL
+SELECT DISTINCT SAL 
         FROM EMP
        WHERE JOB = 'SALESMAN';
 
