@@ -94,14 +94,36 @@ SELECT CONCAT(EMPNO, CONCAT(' : ', CONCAT(ENAME, CONCAT(', ', DEPTNO)))) AS "CON
         FROM EMP
         WHERE ENAME = 'JAMES';
 
-20. RANK() OVER 함수 : 순위 부여시 중복값이 발생하면 중복 값의 갯수만큼 건너뛰고 다음 순위 부여 EX) 2등이 2명이면 3등은 빼고 4등부터 순위 부여.
+21. RANK() OVER 함수 : 순위 부여시 중복값이 발생하면 중복 값의 갯수만큼 건너뛰고 다음 순위 부여 EX) 2등이 2명이면 3등은 빼고 4등부터 순위 부여.
 
+22. 직원 급여 인상하기 문제
+SELECT EMPNO, ENAME, JOB, SAL,
+        DECODE (JOB,
+            'MANAGER',  SAL * 1.08,
+            'SALESMAN', SAL * 1.07,
+            'ANALYST', SAL * 1.05,
+            SAL * 1.03 ) AS 급여인상
+        FROM EMP;
 
+23. CASE 문으로 변경
+SELECT EMPNO, ENAME, JOB, SAL,
+        CASE JOB
+            WHEN 'MANAGER' THEN SAL * 1.08
+            WHEN 'SALESMAN' THEN SAL * 1.07
+            WHEN 'ANALYST' THEN SAL * 1.05
+            ELSE SAL * 1.03
+        END AS 급여인상
+    FROM EMP;    
 
+24. ROLLUP() : 그룹별로 중간 집계를 처리하는 함수. 
+- CUBE() : 그룹별 산출결과를 집계하는 함수.
+SELECT DEPTNO, JOB, COUNT(*), MAX(SAL), SUM(SAL), AVG(SAL)
+FROM EMP
+GROUP BY CUBE(DEPTNO, JOB);
+--GROUP BY ROLLUP(DEPTNO, JOB);
 
-
-
-
+25. RANK() OVER 함수 : 순위 부여시 중복값이 발생하면 중복 값의 갯수만큼 건너뛰고 다음 순위 부여 EX) (90, 80, 80, 80, 70) -> (1등, 2등, 2등, 2등, 5등) 2등이 2명이면 3등은 빼고 4등부터 순위 부여.
+     DENSE_RANK() OVER : 순위 부여시 중복 값이 발생하면 다음 순위를 연속해서 부여 EX) (90, 80, 80, 80, 70) -> (1등 2등 2등 2등 3등)
 
 
 
