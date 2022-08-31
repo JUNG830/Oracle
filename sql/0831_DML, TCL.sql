@@ -211,6 +211,97 @@ SELECT *
 FROM EX_EMP;
 
 ROLLBACK;
+---------------------------------------------------------------------------------------------------------
+/* 트랜잭션(TCL)의 4가지 특성 */
+--1. **원자성(Automicity)**
+--  트랜잭션에서 정의된 연산들은 모두 성공적으로 실행되던지 아니면 전혀 실행되지 않은 상태로 남아 있어야 한다. (All or Nothing)
+--2. **일관성(Consistency)**    
+--  트랜잭션이 실행 되기 전의 데이터베이스 내용이 잘못되어 있지 않다면 
+--  트랜잭션이 실행된 이후에도 데이터베이스의 내용에 잘못이 있으면 안된다. 
+--3. **고립성(Isolation)**
+--  트랜잭션이 실행되는 도중에 다른 트랜잭션의 영향을 받아 잘못된 결과를 만들어서는 안된다.  
+--4. **영속성(Durability)**
+--  트랜잭션이 성공적으로 수행되면 그 트랜잭션이 갱신한 데이터베이스의 내용은 영구적으로 저장된다.
+
+CREATE TABLE DEPT_TCL
+    AS SELECT *
+    FROM DEPT;
+    
+SELECT *
+FROM DEPT_TCL;
+
+INSERT INTO DEPT_TCL
+    VALUES (50, 'DATABASE', 'SEOUL');
+    
+UPDATE DEPT_TCL
+    SET LOC = 'BUSAN';
+--    WHERE DEPTNO = 40;
+
+DELETE FROM DEPT_TCL
+    WHERE DNAME = 'RESEARCH';
+    
+/* ROLLBACK : 트랜잭션(변경사항)을 데이터베이스에 반영하지 않음 */
+-- INSERT, UPDATE, DELETE 만 가능!!
+ROLLBACK;   -- 지금까지 변경했던 사항을 다 초기화.
+
+SELECT *
+FROM DEPT_TCL;
+
+/* COMMIT : 명령어를 사용하면 지금까지 트랜잭션이 모두 반영 됩니다. (되돌릴 수 없음) */
+COMMIT;
+
+/* 세션(session)은 어떤 활동을 위한 시간이나 기간을 뜻함.  */
+-- 오라클 데이터베이스에서 세션은 데이터베이스 접속을 시작으로 
+-- 여러 데이터베이스에서 관련 작업을 수행한 후 접속을 종료하기까지 전체 기간을 의미
+
+
+/* LOCK : 특정 세션에서 조작중인 데이터는 트랜잭이 완료(COMMIT, ROLLBACK)되기 전까지 다른 세션에서 조작할 수 없는 상태가 됩니다. 
+  즉 데이터가 잠기는(LOCK) 것 */
+
+
+---------------------------------------------------------------------------------------------------------
+/* 연습문제  노션 참고,, */
+CREATE TABLE DEPT_HW
+    AS SELECT *
+    FROM DEPT;
+    
+UPDATE DEPT_HW
+    SET DNAME = 'DATABASE',
+            LOC = 'SEOUL'
+    WHERE DEPTNO = 30;    
+
+SELECT *
+FROM DEPT_HW;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

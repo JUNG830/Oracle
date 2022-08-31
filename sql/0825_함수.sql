@@ -205,7 +205,7 @@ SELECT SYSDATE,
     TO_CHAR(SYSDATE, 'HH12') AS "시간12시간_2",
     TO_CHAR(SYSDATE, 'HH24') AS "시간24시간",
     TO_CHAR(SYSDATE, 'WW') AS "해당월중 몇번째주",
-    TO_CHAR(SYSDATE, 'W') AS "1년중 몇번째"
+    TO_CHAR(SYSDATE, 'W') AS "1년중 몇번째주"
 FROM DUAL;
 
 ---------------------------------------------------------------------------------------------
