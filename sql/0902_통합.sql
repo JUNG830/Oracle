@@ -1,0 +1,54 @@
+/* 메뉴 테이블 만들기 */
+
+CREATE TABLE MENU_INFO (
+/*메뉴 구분 번호*/   MPART    NUMBER,
+/*메뉴 구분*/       PARTNAME VARCHAR2(20),
+/*메뉴 번호*/       MNO      NUMBER PRIMARY KEY, -- 기본키
+/*메뉴 이름*/       MNAME    VARCHAR2(20),
+/*메뉴 금액*/       MPRICE   NUMBER
+);
+
+INSERT INTO MENU_INFO VALUES (1000, '커피', 1001, '에스프레소', 2500);
+INSERT INTO MENU_INFO VALUES (1000, '커피', 1002, '아메리카노', 4000);
+INSERT INTO MENU_INFO VALUES (1000, '커피',  1003, '라떼', 5000);
+INSERT INTO MENU_INFO VALUES (1000, '커피',  1004, '카페모카', 5500);
+INSERT INTO MENU_INFO VALUES (2000, '논커피',  2001, '초코우유', 2500);
+INSERT INTO MENU_INFO VALUES (2000, '논커피',  2002, '녹차', 2500);
+INSERT INTO MENU_INFO VALUES (2000, '논커피',  2003, '홍차', 2500);
+INSERT INTO MENU_INFO VALUES (2000, '논커피',  2004, '밀크티', 2500);
+
+SELECT * FROM MENU_INFO;
+DROP TABLE MENU_INFO;
+
+
+-------------------------------------------------------------------------
+/* 옵션 테이블 만들기 */
+
+CREATE TABLE CAFE_OPTION (
+	CUP_SIZE    VARCHAR2(1) CHECK (CUP_SIZE = 'S' OR CUP_SIZE = 'M' OR CUP_SIZE = 'L'),
+	SIZE_PRICE  NUMBER,
+    ADD_SHOT    NUMBER,
+    SHOT_PRICE  NUMBER,
+	ADD_SYRUP   VARCHAR2(30) CHECK (ADD_SYRUP = '헤이즐넛 시럽' OR ADD_SYRUP = '바닐라 시럽' OR ADD_SYRUP = '카라멜 시럽'),
+    SYRUP_PRICE NUMBER,
+	HOT_ICE     VARCHAR2(5) CHECK (HOT_ICE = 'HOT' OR HOT_ICE = 'ICE')
+);
+
+INSERT INTO OPTION_INFO VALUES ('S', 0, 1, 400, );
+INSERT INTO OPTION_INFO VALUES ('M', 500);
+INSERT INTO OPTION_INFO VALUES ('L', 1000);
+
+UPDATE OPTION_INFO
+    SET SIZE_PRICE = 
+        (CASE 
+        WHEN CUP_SIZE = 'S'
+            THEN 0
+        WHEN CUP_SIZE = 'M'
+            THEN 500
+        WHEN CUP_SIZE = 'L'
+            THEN 1000
+        END );        
+
+SELECT * FROM OPTION_INFO;
+DROP TABLE OPTION_INFO;
+
