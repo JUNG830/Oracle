@@ -118,10 +118,10 @@ DELETE FROM EMP_TEMP
 
 DELETE FROM EMP_TEMP
     WHERE EMPNO IN (SELECT E.EMPNO  
-                                        FROM EMP_TEMP E, SALGRADE S
-                                        WHERE E.SAL BETWEEN S.LOSAL AND HISAL
-                                        AND S.GRADE = 1
-                                        AND DEPTNO = 30);
+                        FROM EMP_TEMP E, SALGRADE S
+                        WHERE E.SAL BETWEEN S.LOSAL AND HISAL
+                        AND S.GRADE = 1
+                        AND DEPTNO = 30);
 
 DELETE FROM EMP_TEMP
     WHERE SAL < 1000;
@@ -272,6 +272,8 @@ UPDATE DEPT_HW
 
 SELECT *
 FROM DEPT_HW;
+
+
 
 
 

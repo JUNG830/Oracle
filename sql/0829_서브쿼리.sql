@@ -10,8 +10,8 @@ FROM DEPT;
 SELECT DNAME
 FROM DEPT
 WHERE DEPTNO = (SELECT DEPTNO
-                                FROM EMP
-                                WHERE ENAME = 'KING');
+                FROM EMP
+                WHERE ENAME = 'KING');
                                 
 SELECT DNAME
 FROM DEPT
@@ -28,7 +28,9 @@ SELECT *
     FROM EMP
 WHERE SAL > (SELECT SAL FROM EMP WHERE ENAME = 'JONES');  --2975 보다 높은 급여를 받는 사람 정보 출력
 
-SELECT SAL FROM EMP WHERE ENAME = 'JONES';
+SELECT SAL 
+FROM EMP 
+WHERE ENAME = 'JONES';
 
 -----------------------------------------------------------------------------------------------
 -- 서브쿼리를 사용하여 EMP 테이블의 사원 정보 중에서 사원 이름이 ALLEN인 사원의 추가 수당
@@ -36,8 +38,8 @@ SELECT SAL FROM EMP WHERE ENAME = 'JONES';
 SELECT * 
 FROM EMP 
 WHERE COMM > (SELECT COMM                       -- 가지고온 정보를 COMM 과 비교해서 더 많은 COMM 을 받는 사람의 정보를 가지고 옴. 
-                                FROM EMP 
-                                WHERE ENAME = 'ALLEN');  -- EMP 테이블에서 ALLEN 의 COMM 정보를 가지고 옴
+                FROM EMP 
+                WHERE ENAME = 'ALLEN');  -- EMP 테이블에서 ALLEN 의 COMM 정보를 가지고 옴
 -----------------------------------------------------------------------------------------------
 -- 단일행 서브쿼리와 날짜형 데이터 
 SELECT * 
