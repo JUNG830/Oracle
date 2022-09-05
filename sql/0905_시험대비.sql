@@ -53,8 +53,54 @@ FROM EMP;
 -- 20. 이미 생성된 EMP 테이블에서 ENAME컬럼에 UNIQUE 제약조건 추가하기
 ALTER TABLE EMP
     MODIFY ENAME UNIQUE; 
-
 DESC EMP;
+ALTER TABLE EMP
+    ADD CONSTRAINT EMP_EQ_TEST UNIQUE (ENAME); 
+-- 21. 이미 생성된 EMP 테이블 안에 있는 MGR을 NOT NULL 제약 조건 추가하기.
+ALTER TABLE EMP
+    MODIFY MGR CONSTRAINT EMP_MGR_NN NOT NULL;
+-- 22. 오라클 조인을 ANSI 표준 구문으로 변경하기
+SELECT E.EMPNO, E.ENAME, E.JOB, E.DEPTNO, D.DNAME, D.LOC
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = D.DEPTNO;
+
+-- < ANSI >
+SELECT E.EMPNO, E.ENAME, E.JOB, E.DEPTNO, D.DNAME, D.LOC
+FROM EMP E JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO;
+-- < USING >
+SELECT E.EMPNO, E.ENAME, E.JOB, E.DEPTNO, D.DNAME, D.LOC
+FROM EMP E JOIN DEPT D
+USING (DEPTNO);
+
+-- 23. SQL 의 각 용도를 설명하시오 
+    SELECT 
+    DML
+    DDL
+    TCL(TRANSCTION CONTROL LANGUAGE) : 트랜젝션을 제어. COMMIT, ROLLBACK 
+
+-- 24. RANL() OVER 함수 : 동일한 순위 이후의 등수를 동일한 인원수 만큼 건너뛰고 순위 계산 (순위가 중복되면 중복된 만큼 건너뛰고 이어서 순위를 계산)
+-- 25 RANK() OVER함수 외 DENSE_RANK() OVER 함수 : 동일한 등수를 동일한 인원수만큼 중복해서 부여하고 등수를 건너뛰지 않고 이어서 계산.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
