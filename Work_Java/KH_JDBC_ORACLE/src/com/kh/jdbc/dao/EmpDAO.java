@@ -131,16 +131,18 @@ public class EmpDAO {
     public void empDelete() {
         System.out.println("삭제할 사원 이름 입력 : ");
         String name = sc.next();
-        String sql = "DELETE FROM EMP WHERE ENAME = " + "'" + name + "'";
+        String sql = "DELETE FROM EMP WHERE ENAME = ? ";
         try {
             conn = Common.getConnection();
-            stmt = conn.createStatement();
-            int ret = stmt.executeUpdate(sql);
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            int ret = pstmt.executeUpdate();
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Common.close(stmt);
+        Common.close(pstmt);
         Common.close(conn);
     }
 
