@@ -6,7 +6,7 @@ CREATE TABLE MEMBER_INFO (
     MEMBER_ID       VARCHAR2(20) PRIMARY KEY,
     MEMBER_NAME     VARCHAR2(20) UNIQUE,
     MEMBER_PHONE    VARCHAR2(20) );
-
+         
     
 /* 회원 정보 입력 */
 INSERT INTO MEMBER_INFO VALUES(TO_CHAR(SEQ_MEMBER_ID.NEXTVAL), '미스조', '010-4443-2345');
@@ -58,7 +58,7 @@ INSERT INTO MENU_INFO VALUES (2000, '논커피',  2004, '밀크티', 2500);
 SELECT * FROM MENU_INFO;
 DROP TABLE MENU_INFO;
 
-
+------------------------------------------------------------------
 -- 2) 옵션 코드 테이블
 CREATE TABLE OPTION_CODE_INFO (
 	OPTION_CODE   VARCHAR(20) PRIMARY KEY,
@@ -71,6 +71,7 @@ INSERT INTO OPTION_CODE_INFO VALUES ('003', '시럽 추가');
 
 SELECT * FROM OPTION_CODE_INFO;
 
+------------------------------------------------------------------
 -- 3) 상품별 옵션 정보 테이블
 CREATE TABLE OPTION_INFO (
 	MNO           NUMBER,
@@ -118,8 +119,6 @@ CREATE TABLE ORDER_INFO (
     PRICE NUMBER DEFAULT 0
 );
 
-ALTER TABLE ORDER_INFO
-    MODIFY 
 
 DESC ORDER_INFO;
 
@@ -143,6 +142,8 @@ DELETE FROM ORDER_INFO;
 
 SELECT * FROM ORDER_INFO;
 DROP TABLE ORDER_INFO;
+
+
 /* 주문번호 */
 CREATE SEQUENCE SEQ_ORDER_NO
 START WITH 1 -- 몇번부터 시작할래
@@ -165,8 +166,7 @@ DROP SEQUENCE SEQ_NON_MEM_NO;
 -- 5) 주문 상세 테이블 (옵션 선택)
 CREATE TABLE ORDER_DETAIL (
     ORDER_NO NUMBER,  
-        FOREIGN KEY(ORDER_NO)REFERENCES ORDER_INFO(ORDER_NO),
-    OPTION_CODE VARCHAR(20),
+    OPTION_CODE VARCHAR(20), -- 1 : 사이즈업, 2 : 샷추가, 3 : 시럽추가
     OPTION_COUNT NUMBER
 );
     
@@ -178,6 +178,18 @@ INSERT INTO ORDER_DETAIL(ORDER_NO, OPTION_CODE, OPTION_COUNT)
     VALUES (3, '001', 1);
 INSERT INTO ORDER_DETAIL(ORDER_NO, OPTION_CODE, OPTION_COUNT) 
     VALUES (3, '002', 1);
+INSERT INTO ORDER_DETAIL(ORDER_NO, OPTION_CODE, OPTION_COUNT) 
+    VALUES (5, '001', 1);
+INSERT INTO ORDER_DETAIL(ORDER_NO, OPTION_CODE, OPTION_COUNT) 
+    VALUES (6, '001', 1);
+INSERT INTO ORDER_DETAIL(ORDER_NO, OPTION_CODE, OPTION_COUNT) 
+    VALUES (6, '002', 1);
+INSERT INTO ORDER_DETAIL(ORDER_NO, OPTION_CODE, OPTION_COUNT) 
+    VALUES (7, '001', 1);
+INSERT INTO ORDER_DETAIL(ORDER_NO, OPTION_CODE, OPTION_COUNT) 
+    VALUES (8, '001', 1);
+INSERT INTO ORDER_DETAIL(ORDER_NO, OPTION_CODE, OPTION_COUNT) 
+    VALUES (8, '002', 1);
 
 SELECT * FROM ORDER_DETAIL;
 DROP TABLE ORDER_DETAIL;
@@ -200,7 +212,7 @@ FROM ORDER_INFO OI
         ON MI.MEMBER_ID = OI.MEMBER_ID
 GROUP BY OI.ORDER_DATE, M.MNAME, OI.PRICE, MI.MEMBER_NAME;
     
-
+------------------------------------------------------------------
 -- 총액 > ORDER_INFO 테이블 PRICE에 UPDATE
 UPDATE ORDER_INFO OI
     SET OI.PRICE = (SELECT M.MPRICE + NVL(SUM(OPTION_PRICE * OPTION_COUNT), 0)
@@ -212,9 +224,9 @@ UPDATE ORDER_INFO OI
     LEFT JOIN OPTION_INFO I 
         ON D.OPTION_CODE = I.OPTION_CODE 
             AND OI.MNO = I.MNO
-    WHERE OI.ORDER_NO = '5'
+    WHERE OI.ORDER_NO = '8'
     GROUP BY M.MPRICE)
-    WHERE OI.ORDER_NO = '5';
+    WHERE OI.ORDER_NO = '8';
 
 SELECT * FROM ORDER_INFO;
     
@@ -244,65 +256,66 @@ FROM (
     ) A 
 GROUP BY ROLLUP(A.ORDER_DATE, A.MNAME);
     
-    
-    
-    
-    
-    
-    
-    
-    
-SELECT OI.ORDER_DATE AS 날짜, M.MNAME AS 메뉴명, COUNT(DISTINCT(OI.ORDER_NO)) AS 수량, M.MPRICE + NVL(SUM(I.OPTION_PRICE * D.OPTION_COUNT), 0) AS 총합계
-        FROM ORDER_INFO OI 
-            INNER JOIN MENU_INFO M 
-                ON OI.MNO = M.MNO
-            LEFT JOIN ORDER_DETAIL D
-                ON OI.ORDER_NO = D.ORDER_NO
-            LEFT JOIN OPTION_CODE_INFO CI            
-                ON CI.OPTION_CODE = D.OPTION_CODE
-            LEFT JOIN OPTION_INFO I
-                ON OI.MNO = I.MNO
-                    AND I.OPTION_CODE = D.OPTION_CODE 
-            GROUP BY OI.ORDER_DATE, M.MNAME, M.MPRICE;
+------------------------------------------------------
+/* 주문 취소 */
+DROP TABLE CANCEL_MENU; 
+SELECT * FROM CANCEL_MENU;
+
+CREATE TABLE CANCEL_MENU (
+    MEMBER_ID VARCHAR2(20),
+    ORDER_NO  NUMBER,
+    CANCEL_YN VARCHAR2(1) CHECK (CANCEL_YN = 'Y' OR CANCEL_YN = 'N')
+); 
+
+INSERT INTO CANCEL_MENU VALUES ('5001', 5, 'Y');
+
+                                
+DELETE FROM ORDER_DETAIL D
+    WHERE D.ORDER_NO IN ( SELECT OI.ORDER_NO
+                            FROM ORDER_INFO OI
+                            INNER JOIN CANCEL_MENU CM
+                                ON OI.MEMBER_ID = CM.MEMBER_ID
+                            WHERE CM.CANCEL_YN = 'Y' );                                
+                                                               
+DELETE FROM ORDER_INFO OI
+    WHERE(OI.ORDER_NO) = ( SELECT CM.ORDER_NO
+                               FROM CANCEL_MENU CM
+                                WHERE CM.CANCEL_YN = 'Y' );
+
+SELECT *
+FROM ORDER_INFO;
+
+SELECT *
+FROM ORDER_DETAIL;
+ 
 
 
+    
+    
+    
+    
+    
+/* 트리거 만들기 */
+CREATE OR REPLACE TRIGGER TRI_CANCEL
+BEFORE DELETE ON ORDER_INFO
+FOR EACH ROW
+[WHEN (<조건>)]
 
+[DECLARE <변수선언>]
 
+BEGIN
 
+         <실행코드>
 
+[EXCEPTION <예외사항>]
 
-
-
-
-    
-
-
-
-SELECT 주문일, NVL(메뉴명,'일별 합계') AS 메뉴명, SUM(판매량) 총판매량, SUM(총매출액) 총매출액
-FROM (
-SELECT 주문일, 주문내역.메뉴명 메뉴명, COUNT(*) 판매량, SUM((메뉴가격) + (옵션.추가금액)) 총매출액 
-    FROM 주문내역, 옵션, 카페메뉴 
-WHERE 주문내역.메뉴명 = 카페메뉴.메뉴명
-    AND 옵션.옵션이름 = 주문내역.옵션이름
-GROUP BY 주문일, 주문내역.메뉴명
-) A
-GROUP BY ROLLUP(주문일, 메뉴명);
+END <트리거 이름>;
     
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
+SELECT M.MNO, C.OPTION_CODE, C.OPTION_NAME, O.OPTION_PRICE 
+                    FROM MENU_INFO M 
+                    INNER JOIN OPTION_INFO O ON M.MNO = O.MNO
+                    INNER JOIN OPTION_CODE_INFO C ON O.OPTION_CODE = C.OPTION_CODE
+                    WHERE M.MNAME = '아메리카노';
