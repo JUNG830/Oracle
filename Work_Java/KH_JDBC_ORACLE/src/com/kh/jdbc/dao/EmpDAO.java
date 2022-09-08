@@ -85,6 +85,7 @@ public class EmpDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        Common.commit(conn);
         Common.close(pstmt);
         Common.close(conn);
     }
@@ -123,6 +124,7 @@ public class EmpDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        Common.commit(conn);
         Common.close(pstmt);
         Common.close(conn);
 
@@ -138,15 +140,13 @@ public class EmpDAO {
             pstmt.setString(1, name);
             int ret = pstmt.executeUpdate();
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        Common.commit(conn);
         Common.close(pstmt);
         Common.close(conn);
     }
-
-
 
     public void empSelectRst(List<EmpVO> list) {
         for(EmpVO e : list) {
@@ -159,8 +159,6 @@ public class EmpDAO {
             System.out.print(e.getComm() + " ");
             System.out.print(e.getDeptNO());
             System.out.println();
-
-
         }
     }
 }
