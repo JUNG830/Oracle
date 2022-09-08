@@ -70,7 +70,7 @@ INSERT INTO OPTION_CODE_INFO VALUES ('002', '샷 추가');
 INSERT INTO OPTION_CODE_INFO VALUES ('003', '시럽 추가');
 
 SELECT * FROM OPTION_CODE_INFO;
-
+     
 ------------------------------------------------------------------
 -- 3) 상품별 옵션 정보 테이블
 CREATE TABLE OPTION_INFO (
