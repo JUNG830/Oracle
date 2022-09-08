@@ -1,7 +1,7 @@
 SELECT *
 FROM EMP;
 
-
+                         
 
 /* 카테고리 테이블 */
 DROP TABLE 카테고리;
